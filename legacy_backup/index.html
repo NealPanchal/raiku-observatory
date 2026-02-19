@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raiku Execution Observatory</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+
+<body>
+    <!-- Animated background -->
+    <div class="grid-background"></div>
+    <canvas id="particles"></canvas>
+
+    <!-- Main container -->
+    <div class="dashboard-wrapper">
+        <!-- Sidebar -->
+        <nav class="sidebar glass-panel">
+            <div class="sidebar-logo">RAIKU</div>
+            <ul class="nav-links">
+                <li class="nav-item active" data-view="dashboard"><span class="nav-icon">📊</span> Dashboard</li>
+                <li class="nav-item" data-view="execution"><span class="nav-icon">⚡</span> Execution</li>
+                <li class="nav-item" data-view="consensus"><span class="nav-icon">🗳️</span> Consensus</li>
+                <li class="nav-item" data-view="settings"><span class="nav-icon">⚙️</span> Settings</li>
+            </ul>
+            <div class="sidebar-footer">
+                <div class="status-indicator">
+                    <span class="status-dot"></span> Online
+                </div>
+            </div>
+        </nav>
+
+        <!-- Congestion Alert Banner -->
+        <div id="congestion-alert" class="alert-banner" style="display: none;">
+            <div class="alert-icon">⚠️</div>
+            <div class="alert-content">
+                <span class="alert-title">EXECUTION INSTABILITY DETECTED</span>
+                <span class="alert-message">Drift variance exceeding safety thresholds. Expect inclusion delays.</span>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header-compact">
+                <div class="header-left">
+                    <h1 class="title-compact">EXECUTION OBSERVATORY</h1>
+                    <div class="subtitle-compact">Live Infrastructure Monitoring</div>
+                </div>
+                <div class="eri-panel">
+                    <div class="eri-header">
+                        <span class="eri-label">EXECUTION RISK INDEX</span>
+                        <span class="eri-trend" id="eri-trend">▼ 2.4%</span>
+                    </div>
+                    <div class="eri-value-container">
+                        <span class="eri-value" id="eri-value">12.4</span>
+                        <div class="eri-status-indicator" id="eri-status-light"></div>
+                    </div>
+                    <div class="eri-status-text" id="eri-status-text">STABLE</div>
+                </div>
+            </header>
+
+            <!-- Dashboard View -->
+            <div id="dashboard-view" class="view-section active-view dashboard-grid">
+                <!-- Section 1: Metrics -->
+                <section class="metrics-row">
+                    <div class="metric-card glass-panel small-card">
+                        <div class="metric-header">
+                            <span class="metric-label">TPS</span>
+                            <span class="metric-value small" id="tps-value">—</span>
+                        </div>
+                        <canvas id="tpsChart"></canvas>
+                    </div>
+                    <div class="metric-card glass-panel small-card">
+                        <div class="metric-header">
+                            <span class="metric-label">Slot Time</span>
+                            <span class="metric-value small" id="slot-time-value">—</span>
+                        </div>
+                        <canvas id="slotChart"></canvas>
+                    </div>
+                    <div class="metric-card glass-panel small-card">
+                        <div class="metric-header">
+                            <span class="metric-label">Drift</span>
+                            <span class="metric-value small" id="drift-value">—</span>
+                        </div>
+                        <canvas id="driftChart"></canvas>
+                    </div>
+                    <div class="metric-card glass-panel small-card">
+                        <div class="metric-header">
+                            <span class="metric-label">Fees</span>
+                            <span class="metric-value small" id="fees-value">—</span>
+                        </div>
+                        <canvas id="feesChart"></canvas>
+                    </div>
+                    <div class="metric-card glass-panel small-card">
+                        <div class="metric-header">
+                            <span class="metric-label">Volatility</span>
+                            <span class="metric-value small" id="volatility-value">—</span>
+                        </div>
+                        <canvas id="volatilityChart"></canvas>
+                    </div>
+                </section>
+
+                <!-- Volatility Heatmap -->
+                <!-- Heatmap & Prediction -->
+                <section class="heatmap-row split-row">
+                    <div class="glass-panel heatmap-panel">
+                        <div class="panel-header small">
+                            <span class="panel-title">24H VOLATILITY HEATMAP (DRIFT & FEES)</span>
+                        </div>
+                        <canvas id="volatilityHeatmap"></canvas>
+                    </div>
+
+                    <div class="glass-panel prediction-panel">
+                        <div class="panel-header small">
+                            <span class="panel-title">PREDICTIVE CONGESTION MODEL (2 MIN)</span>
+                            <span class="prediction-value" id="prediction-prob">Prob: 12%</span>
+                        </div>
+                        <canvas id="predictionCanvas"></canvas>
+                    </div>
+                </section>
+
+                </section>
+
+
+
+                <!-- Institutional Metrics (Hidden by default) -->
+                <section class="institutional-metrics-row" style="display: none;">
+                    <!-- Sensitivity Controls -->
+                    <div class="glass-panel control-panel">
+                        <div class="control-group">
+                            <label>POSITION SIZE ($)</label>
+                            <input type="range" id="input-position" min="1000" max="1000000" value="50000" step="1000">
+                            <span class="input-val" id="val-position">50k</span>
+                        </div>
+                        <div class="control-group">
+                            <label>SLIPPAGE TOLERANCE (%)</label>
+                            <input type="range" id="input-slippage" min="0.1" max="5.0" value="0.5" step="0.1">
+                            <span class="input-val" id="val-slippage">0.5%</span>
+                        </div>
+                        <div class="control-group">
+                            <label>LEVERAGE (x)</label>
+                            <input type="range" id="input-leverage" min="1" max="100" value="1" step="1">
+                            <span class="input-val" id="val-leverage">1x</span>
+                        </div>
+                    </div>
+
+                    <div class="metric-card glass-panel small-card danger-zone">
+                        <div class="metric-header">
+                            <span class="metric-label">Capital at Risk</span>
+                            <span class="metric-value small" id="capital-risk">—</span>
+                        </div>
+                        <div class="risk-bar">
+                            <div class="risk-fill" id="risk-fill"></div>
+                        </div>
+                    </div>
+                    <div class="metric-card glass-panel small-card warning-zone">
+                        <div class="metric-header">
+                            <span class="metric-label">Slippage Exposure</span>
+                            <span class="metric-value small" id="slippage-exposure">—</span>
+                        </div>
+                        <div class="risk-bar">
+                            <div class="risk-fill" id="slippage-fill"></div>
+                        </div>
+                    </div>
+                    <div class="metric-card glass-panel small-card">
+                        <div class="metric-header">
+                            <span class="metric-label">Liquidation Prob.</span>
+                            <span class="metric-value small" id="liquidation-prob">—</span>
+                        </div>
+                        <div class="risk-bar">
+                            <div class="risk-fill" id="liquidation-fill"></div>
+                        </div>
+                    </div>
+                    <div class="metric-card glass-panel small-card">
+                        <div class="metric-header">
+                            <span class="metric-label">Priority Fee 99th%</span>
+                            <span class="metric-value small" id="prio-fee-99">—</span>
+                        </div>
+                        <canvas id="prioFeeChart" height="20"></canvas>
+                    </div>
+                    <div class="metric-card glass-panel small-card">
+                        <div class="metric-header">
+                            <span class="metric-label">Jitter Max</span>
+                            <span class="metric-value small" id="jitter-max">—</span>
+                        </div>
+                        <canvas id="jitterMaxChart" height="20"></canvas>
+                    </div>
+                </section>
+
+                <section class="validator-row">
+                    <div class="metric-card glass-panel small-card">
+                        <div class="metric-header">
+                            <span class="metric-label">Leader Consistency</span>
+                            <span class="metric-value small" id="val-consistency">99.9%</span>
+                        </div>
+                        <div class="risk-bar">
+                            <div class="risk-fill" id="val-consistency-bar" style="width: 99%;"></div>
+                        </div>
+                    </div>
+                    <div class="metric-card glass-panel small-card">
+                        <div class="metric-header">
+                            <span class="metric-label">Missed Slot Rate</span>
+                            <span class="metric-value small" id="val-missed">0.02%</span>
+                        </div>
+                        <div class="risk-bar">
+                            <div class="risk-fill" id="val-missed-trend" style="width: 2%;"></div>
+                        </div>
+                    </div>
+                    <div class="metric-card glass-panel small-card">
+                        <div class="metric-header">
+                            <span class="metric-label">Block Variance</span>
+                            <span class="metric-value small" id="val-variance">17ms</span>
+                        </div>
+                    </div>
+                    <div class="metric-card glass-panel small-card">
+                        <div class="metric-header">
+                            <span class="metric-label">Gossip Latency</span>
+                            <span class="metric-value small" id="val-gossip">41ms</span>
+                        </div>
+                    </div>
+                </section>
+
+
+                <!-- Section 2: Comparison -->
+                <section class="comparison-row">
+                    <!-- Left Panel -->
+                    <div class="panel glass-panel compact-panel">
+                        <div class="panel-header">
+                            <h3 class="panel-title">PROBABILISTIC (LIVE)</h3>
+                            <div class="status-badge live">LIVE</div>
+                        </div>
+
+                        <div class="highlight-stat">
+                            <span class="stat-label">Latency</span>
+                            <span class="stat-value probabilistic large" id="prob-latency">—</span>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="probLatencyChart"></canvas>
+                        </div>
+
+                        <div class="inclusion-container">
+                            <div class="stat-row compact">
+                                <span class="stat-label">Inclusion Probability</span>
+                                <span class="stat-value probabilistic" id="prob-inclusion">—</span>
+                            </div>
+                            <div class="inclusion-bar small">
+                                <div class="inclusion-fill probabilistic" id="prob-inclusion-bar"></div>
+                                <div class="block-queue-container">
+                                    <div class="stat-row compact">
+                                        <span class="stat-label">Block Queue Jitter</span>
+                                        <span class="stat-value probabilistic" id="prob-jitter">—</span>
+                                    </div>
+                                    <canvas id="probBlockQueue" height="30"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Panel -->
+                    <div class="panel glass-panel compact-panel">
+                        <div class="panel-header">
+                            <h3 class="panel-title">DETERMINISTIC (SIM)</h3>
+                            <div class="status-badge sim">SIMULATED</div>
+                        </div>
+
+                        <div class="highlight-stat">
+                            <span class="stat-label">Latency</span>
+                            <span class="stat-value deterministic large" id="det-latency">—</span>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="detLatencyChart"></canvas>
+                        </div>
+
+                        <div class="inclusion-container">
+                            <div class="stat-row compact">
+                                <span class="stat-label">Inclusion Probability</span>
+                                <span class="stat-value deterministic" id="det-inclusion">100.0%</span>
+                            </div>
+                            <div class="inclusion-bar small">
+                                <div class="inclusion-fill deterministic" id="det-inclusion-bar"></div>
+                            </div>
+                            <div class="block-queue-container">
+                                <div class="stat-row compact">
+                                    <span class="stat-label">Block Queue Order</span>
+                                    <span class="stat-value deterministic" id="det-jitter">0ms (Perfect)</span>
+                                </div>
+                                <canvas id="detBlockQueue" height="30"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 3: Simulation Bar -->
+                <!-- Architecture Diagram -->
+                <section class="architecture-row">
+                    <div class="glass-panel architecture-panel">
+                        <div class="panel-header small">
+                            <span class="panel-title">EXECUTION PIPELINE ARCHITECTURE</span>
+                        </div>
+                        <div class="architecture-diagram" id="architecture-diagram">
+                            <canvas id="architectureCanvas" height="60"></canvas>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 3: Simulation Bar -->
+                <section class="controls-row">
+                    <div class="simulation-bar glass-panel">
+                        <div class="sim-status-text">Network Status: <span id="network-status"
+                                class="status-normal">NORMAL</span>
+                        </div>
+                        <div class="controls-group">
+                            <button id="institutional-mode-btn" class="simulation-btn compact-btn">
+                                INSTITUTIONAL MODE: <span id="inst-mode-status">OFF</span>
+                            </button>
+                            <button id="congestion-btn" class="simulation-btn compact-btn">
+                                <span id="btn-text">SIMULATE CONGESTION</span>
+                                <span id="btn-status" class="btn-status"></span>
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- AI Analyst Panel -->
+                <section class="analyst-row">
+                    <div class="glass-panel analyst-panel">
+                        <div class="panel-header small">
+                            <span class="panel-title">AI EXECUTION ANALYST</span>
+                            <span class="status-indicator online">ACTIVE</span>
+                        </div>
+                        <div class="analyst-content" id="analyst-output">
+                            Initializing infrastructure analysis parameters...
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Placeholder Views -->
+            <div id="execution-view" class="view-section" style="display: none;">
+                <div class="glass-panel"
+                    style="height: 100%; display: flex; justify-content: center; align-items: center;">
+                    <div style="text-align: center;">
+                        <span style="font-size: 3rem; display: block; margin-bottom: 20px;">⚡</span>
+                        <h2 style="color: var(--color-neon);">EXECUTION DETAILS</h2>
+                        <p style="color: rgba(255,255,255,0.5);">Detailed execution metrics coming soon.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="consensus-view" class="view-section" style="display: none;">
+                <div class="glass-panel"
+                    style="height: 100%; display: flex; justify-content: center; align-items: center;">
+                    <div style="text-align: center;">
+                        <span style="font-size: 3rem; display: block; margin-bottom: 20px;">🗳️</span>
+                        <h2 style="color: var(--color-neon);">CONSENSUS STATUS</h2>
+                        <p style="color: rgba(255,255,255,0.5);">Validator voting and slot leader schedule.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="settings-view" class="view-section" style="display: none;">
+                <div class="glass-panel"
+                    style="height: 100%; display: flex; justify-content: center; align-items: center;">
+                    <div style="text-align: center;">
+                        <span style="font-size: 3rem; display: block; margin-bottom: 20px;">⚙️</span>
+                        <h2 style="color: var(--color-neon);">SYSTEM SETTINGS</h2>
+                        <p style="color: rgba(255,255,255,0.5);">Configure RPC endpoints and simulation parameters.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
