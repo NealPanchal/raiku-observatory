@@ -627,6 +627,7 @@ body {
         --gap: 16px;
         --gap-sm: 12px;
         --gap-xs: 6px;
+        --sidebar-width: 100%;
     }
     
     .dashboard-wrapper {
@@ -641,27 +642,33 @@ body {
     .sidebar {
         width: 100%;
         padding: 12px;
+        order: -1;
     }
     
     .nav-links {
         flex-direction: row;
         overflow-x: auto;
         gap: 4px;
+        -webkit-overflow-scrolling: touch;
     }
     
     .nav-item {
-        padding: 8px 12px;
+        padding: 10px 14px;
         font-size: 0.8rem;
         white-space: nowrap;
+        min-width: fit-content;
+        touch-action: manipulation;
     }
     
     .nav-icon {
         font-size: 1rem;
+        margin-right: 4px;
     }
     
     .sidebar-logo {
         font-size: 1.2rem;
         padding: 8px 0;
+        text-align: center;
     }
     
     .sidebar-footer {
@@ -669,7 +676,7 @@ body {
     }
     
     .metrics-row {
-        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
         gap: var(--gap-xs);
         padding: var(--gap-xs);
     }
@@ -686,14 +693,48 @@ body {
     
     .glass-panel {
         padding: 16px;
+        border-radius: 8px;
     }
     
     .section-title {
         font-size: 1rem;
+        margin-bottom: 12px;
     }
     
     .metric-value {
         font-size: 1.25rem;
+    }
+    
+    .header-compact {
+        padding: 12px 16px;
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .title-compact {
+        font-size: 1.1rem;
+    }
+    
+    .subtitle-compact {
+        font-size: 0.7rem;
+    }
+    
+    .dashboard-grid {
+        gap: var(--gap-sm);
+    }
+    
+    .settings-content {
+        grid-template-columns: 1fr;
+        gap: var(--gap-sm);
+    }
+    
+    .settings-section {
+        padding: 16px;
+    }
+    
+    .developer-credit {
+        padding: 12px;
+        font-size: 0.75rem;
     }
 }
 
@@ -707,15 +748,96 @@ body {
     
     body {
         font-size: 14px;
+        -webkit-text-size-adjust: 100%;
+        -ms-text-size-adjust: 100%;
     }
     
     .glass-panel {
         padding: 12px;
+        border-radius: 6px;
     }
     
     .simulation-btn {
-        padding: 4px 8px;
+        padding: 8px 12px;
+        font-size: 0.8rem;
+        min-height: 40px;
+        touch-action: manipulation;
+    }
+    
+    .nav-item {
+        padding: 12px 16px;
+        font-size: 0.85rem;
+        border-radius: 6px;
+    }
+    
+    .nav-item:hover {
+        background: rgba(192, 255, 56, 0.1);
+    }
+    
+    .nav-item.active {
+        background: rgba(192, 255, 56, 0.2);
+        border-color: var(--color-neon);
+    }
+    
+    .metric-card {
+        padding: 12px;
+        min-height: 80px;
+    }
+    
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+    
+    .section-subtitle {
         font-size: 0.7rem;
+    }
+    
+    .ai-analyst {
+        padding: 12px;
+        font-size: 0.8rem;
+    }
+    
+    .ai-analyst-content {
+        font-size: 0.75rem;
+        line-height: 1.4;
+    }
+    
+    .heatmap-section,
+    .comparison-section,
+    .validator-architecture-section,
+    .controls-section,
+    .ai-section {
+        min-height: 120px;
+    }
+    
+    /* Touch-friendly improvements */
+    * {
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    button,
+    a,
+    .nav-item {
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        user-select: none;
+    }
+    
+    /* Better scrolling on mobile */
+    .main-content {
+        -webkit-overflow-scrolling: touch;
+        scroll-behavior: smooth;
+    }
+    
+    /* Mobile-specific animations */
+    .simulation-btn:active {
+        transform: scale(0.98);
+    }
+    
+    .nav-item:active {
+        transform: scale(0.98);
     }
     
     .metrics-row {
@@ -730,7 +852,20 @@ body {
     .metric-value {
         font-size: 1.1rem;
     }
-    
+}
+
+/* ===== SETTINGS PAGE ===== */
+.settings-page {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap);
+    flex: 1;
+    padding: 0;
+    min-height: 0;
+}
+
+/* ===== CONTROLS ROW (Mobile) ===== */
+@media (max-width: 480px) {
     .controls-row {
         flex-direction: column;
         gap: var(--gap-sm);
@@ -745,16 +880,6 @@ body {
     .button-group {
         justify-content: center;
     }
-}
-
-/* ===== SETTINGS PAGE ===== */
-.settings-page {
-    display: flex;
-    flex-direction: column;
-    gap: var(--gap);
-    flex: 1;
-    padding: 0;
-    min-height: 0;
 }
 
 .settings-content {
