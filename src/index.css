@@ -621,6 +621,21 @@ body {
     justify-content: space-between;
 }
 
+/* ===== CHART CONTAINERS ===== */
+.chart-container {
+    width: 100%;
+    height: 100px;
+    position: relative;
+    min-height: 100px;
+}
+
+.comparison-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-height: 200px;
+}
+
 /* ===== RESPONSIVE DESIGN ===== */
 @media (max-width: 768px) {
     :root {
@@ -681,9 +696,62 @@ body {
         padding: var(--gap-xs);
     }
     
-    .comparison-grid {
+    .comparison-section {
         grid-template-columns: 1fr;
         gap: var(--gap-sm);
+        min-height: 300px;
+    }
+    
+    .chart-container {
+        height: 100px !important;
+        min-height: 100px !important;
+        width: 100%;
+        overflow: hidden;
+    }
+    
+    .comparison-panel {
+        min-height: 120px;
+        padding: 12px !important;
+    }
+    
+    .comparison-section {
+        min-height: 250px;
+        gap: var(--gap-xs);
+    }
+    
+    .heatmap-section {
+        min-height: 120px;
+    }
+    
+    .validator-architecture-section {
+        min-height: 120px;
+    }
+    
+    .controls-section {
+        min-height: 80px;
+    }
+    
+    .ai-section {
+        min-height: 100px;
+    }
+    
+    /* Better scrolling for charts */
+    .main-content {
+        overflow-y: auto;
+        overflow-x: hidden;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    /* Ensure charts are visible */
+    canvas {
+        max-width: 100% !important;
+        height: auto !important;
+    }
+    
+    /* Fix chart responsiveness */
+    .chart-container canvas {
+        width: 100% !important;
+        height: 100% !important;
     }
     
     .validator-architecture-row {

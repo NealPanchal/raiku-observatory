@@ -6,8 +6,9 @@ const HeatmapSection = ({ history, congestion }) => {
     useEffect(() => {
         const canvas = canvasRef.current;
         const ctx = canvas.getContext('2d');
-        const width = canvas.width = canvas.parentElement.clientWidth;
-        const height = canvas.height = canvas.parentElement.clientHeight;
+        const container = canvas.parentElement;
+        const width = canvas.width = container.clientWidth;
+        const height = canvas.height = Math.max(120, container.clientHeight);
 
         ctx.clearRect(0, 0, width, height);
 

@@ -25,9 +25,9 @@ const chartOptions = {
 
 const ComparisonSection = ({ data, congestion }) => {
     return (
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--gap)', height: '280px' }}>
+        <div className="comparison-section">
             {/* Probabilistic Panel */}
-            <div className="glass-panel">
+            <div className="glass-panel comparison-panel">
                 <div className="section-header">
                     <h3 className="section-title">PROBABILISTIC (LIVE)</h3>
                     <span className={`section-subtitle ${congestion ? 'text-amber' : 'text-neon'}`}>LIVE</span>
@@ -67,8 +67,8 @@ const ComparisonSection = ({ data, congestion }) => {
                     {data.detLatency}ms
                 </div>
 
-                <div style={{ height: '100px', margin: '15px 0' }}>
-                    <Line data={createChartData('Deterministic', '#C0FF38')} options={chartOptions} />
+                <div className="chart-container">
+                    <Line data={createChartData('Probabilistic', '#C0FF38')} options={chartOptions} />
                 </div>
 
                 <div style={{ marginTop: 'auto' }}>
